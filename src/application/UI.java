@@ -6,9 +6,9 @@ public class UI {
 
   public static void printBoard(ChessPiece[][] pieces) {
     for (int i = 0; i < pieces.length; i++) {
-      System.out.print((8-i) + " ");
+      System.out.print((8 - i) + " ");
 
-      for (int j = 0; j < pieces.length; j++) {//considera-se que a matriz é quadrada(8x8)
+      for (int j = 0; j < pieces.length; j++) {// considera-se que a matriz é quadrada(8x8)
         PrintPiece(pieces[i][j]);
       }
       System.out.println();
@@ -16,10 +16,10 @@ public class UI {
     System.out.println("  A B C D E F G H");
   }
 
-  private static void PrintPiece(ChessPiece piece){
-    if(piece == null){
+  private static void PrintPiece(ChessPiece piece) {
+    if (piece == null) {
       System.out.print("_");
-    }else{
+    } else {
       System.out.print(piece);
     }
 

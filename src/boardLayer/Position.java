@@ -4,7 +4,7 @@ public class Position {
   private int column;
   private int row;
 
-  public Position(int row, int column){
+  public Position(int row, int column) {
     this.row = row;
     this.column = column;
   }

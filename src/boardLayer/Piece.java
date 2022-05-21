@@ -9,7 +9,7 @@ public class Piece {
     position = null;
   }
 
-  protected Board getBoard(){
+  protected Board getBoard() {
     return board;
   }
 }
