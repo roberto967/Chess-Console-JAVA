@@ -5,9 +5,9 @@ import boardLayer.Position;
 public class ChessPosition {
   private char column;
   private int row;
-  
-  public ChessPosition(char column, int row){
-    if(column < 'A' || column > 'H' || row < 1|| row > 8){
+
+  public ChessPosition(char column, int row) {
+    if (column < 'A' || column > 'H' || row < 1 || row > 8) {
       throw new ChessExeption("Erro ao instanciar ChessPosition. Valores validos são de a1 à h8.");
     }
 
@@ -28,7 +28,7 @@ public class ChessPosition {
   }
 
   protected static ChessPosition fromPosition(Position position) {
-    return new ChessPosition((char)('A' - position.getColumn()), 8 - position.getRow());
+    return new ChessPosition((char) ('A' - position.getColumn()), 8 - position.getRow());
   }
 
   @Override

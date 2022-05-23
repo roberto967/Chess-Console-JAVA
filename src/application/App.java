@@ -1,19 +1,28 @@
 package application;
 
-import boardLayer.Board;
-import boardLayer.Position;
+import java.util.Scanner;
+
 import chess.ChessMatch;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        // System.out.println("Hello, Chess!");
-        // Board board = new Board(8, 8);
+        Scanner sc = new Scanner(System.in);
 
         ChessMatch chessMatch = new ChessMatch();
 
-        // chessMatch.getPieces();
+        while (true) {
+            UI.printBoard(chessMatch.getPieces());
+            System.out.println();
 
-        UI.printBoard(chessMatch.getPieces());
-        //System.out.println('H'-'A');
+            System.out.print("Posicao inicial: ");
+            ChessPosition source = UI.readChessPosition(sc);
+
+            System.out.print("Posicao destino: ");
+            ChessPosition target = UI.readChessPosition(sc);
+
+            ChessPiece capturedPiece = chessMatch.performChessMove(source, target);
+        }
     }
 }

@@ -1,9 +1,11 @@
 package chess;
 
-public class ChessExeption extends RuntimeException{
+import boardLayer.BoardException;
+
+public class ChessExeption extends BoardException {
   private static final long serialVersioUID = 1L;
 
-  public ChessExeption (String msg){
+  public ChessExeption(String msg) {
     super(msg);
   }
 }
