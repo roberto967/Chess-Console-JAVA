@@ -14,5 +14,6 @@ public class App {
         // chessMatch.getPieces();
 
         UI.printBoard(chessMatch.getPieces());
+        //System.out.println('H'-'A');
     }
 }
