@@ -8,10 +8,22 @@ import chess.pieces.Rook;
 
 public class ChessMatch {
   private Board board;
+  private Color currentPlayer;
+  private int turn;
 
   public ChessMatch() {
     board = new Board(8, 8);
+    turn = 1;
+    currentPlayer = Color.WHITE;
     inicialSetup();
+  }
+
+  public int getTurn() {
+    return turn;
+  }
+
+  public Color getCurrentPlayer() {
+    return currentPlayer;
   }
 
   public ChessPiece[][] getPieces() {
@@ -43,7 +55,7 @@ public class ChessMatch {
   public boolean[][] possibleMoves(ChessPosition sourcePosition) {
     Position position = sourcePosition.toPosition();
     validateSourcePosition(position);
-    
+
     return board.piece(position).possibleMoves();
   }
 
@@ -55,6 +67,8 @@ public class ChessMatch {
     validateSourcePosition(source, target);
 
     Piece capturedPiece = makeMove(source, target);
+
+    nextTurn();
 
     return (ChessPiece) capturedPiece;
   }
@@ -70,6 +84,10 @@ public class ChessMatch {
       throw new ChessExeption("Não há peça no local de origem.");
     }
 
+    if(currentPlayer != ((ChessPiece)board.piece(position)).getColor()){
+      throw new ChessExeption("A peça escolhida não corresponde a cor de jogada atual.");
+    }
+
     if(!board.piece(position).isThereAnyPossibleMove()){
       throw new ChessExeption("Não há movimentos possiveis para a peça escolhida.");
     }
@@ -83,5 +101,10 @@ public class ChessMatch {
     board.placePiece(p, target);
 
     return capturedPiece;
+  }
+
+  private void nextTurn(){
+    turn ++;
+    currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
   }
 }
