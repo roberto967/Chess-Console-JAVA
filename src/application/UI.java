@@ -62,6 +62,12 @@ public class UI {
     } else {
       System.out.println("PRETAS jogam.");
     }
+
+    if(chessMatch.getCheck()){
+      System.out.print(ANSI_YELLOW);
+      System.out.println("CHECK !!!!");
+      System.out.print(ANSI_RESET);
+    }
   }
 
   public static void printBoard(ChessPiece[][] pieces) {

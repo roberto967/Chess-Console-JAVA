@@ -2,6 +2,8 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import boardLayer.Board;
 import boardLayer.Piece;
@@ -13,6 +15,7 @@ public class ChessMatch {
   private Board board;
   private Color currentPlayer;
   private int turn;
+  private boolean check;
 
   private List<Piece> piecesOnTheBoard = new ArrayList<>();
   private List<Piece> capturedPieces = new ArrayList<>();
@@ -21,6 +24,7 @@ public class ChessMatch {
     board = new Board(8, 8);
     turn = 1;
     currentPlayer = Color.WHITE;
+    check = false;
     inicialSetup();
   }
 
@@ -75,29 +79,53 @@ public class ChessMatch {
 
     Piece capturedPiece = makeMove(source, target);
 
+    if(testCheck(currentPlayer)){
+      undoMove(source, target, capturedPiece);
+
+      throw new ChessExeption("Você não pode se por em CHECK.");
+    }
+
+    check = (testCheck(opponet(currentPlayer))) ? true : false;
+
     nextTurn();
 
     return (ChessPiece) capturedPiece;
   }
 
   private void validateSourcePosition(Position source, Position target) {
-      if(!board.piece(source).possibleMove(target)){
-        throw new ChessExeption("A peça escolhida não pode ser movida para a posição de destino");
-      }
+    if (!board.piece(source).possibleMove(target)) {
+      throw new ChessExeption("A peça escolhida não pode ser movida para a posição de destino");
+    }
   }
 
   private void validateSourcePosition(Position position) {
-    if(!board.thereIsAPiece(position)){
+    if (!board.thereIsAPiece(position)) {
       throw new ChessExeption("Não há peça no local de origem.");
     }
 
-    if(currentPlayer != ((ChessPiece)board.piece(position)).getColor()){
+    if (currentPlayer != ((ChessPiece) board.piece(position)).getColor()) {
       throw new ChessExeption("A peça escolhida não corresponde a cor de jogada atual.");
     }
 
-    if(!board.piece(position).isThereAnyPossibleMove()){
+    if (!board.piece(position).isThereAnyPossibleMove()) {
       throw new ChessExeption("Não há movimentos possiveis para a peça escolhida.");
     }
+  }
+
+  private boolean testCheck(Color color) {
+    Position kingpPosition = king(color).getChessPosition().toPosition();
+    List<Piece> opponentPieces = piecesOnTheBoard.stream().filter(x -> ((ChessPiece) x).getColor() == opponet(color))
+        .collect(Collectors.toList());
+
+    for(Piece p : opponentPieces){
+      boolean[][] mat = p.possibleMoves();
+
+      if(mat[kingpPosition.getRow()][kingpPosition.getColumn()]){
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private Piece makeMove(Position source, Position target) {
@@ -107,7 +135,7 @@ public class ChessMatch {
 
     board.placePiece(p, target);
 
-    if(capturedPiece !=null){
+    if (capturedPiece != null) {
       piecesOnTheBoard.remove(capturedPiece);
       capturedPieces.add(capturedPiece);
     }
@@ -115,8 +143,43 @@ public class ChessMatch {
     return capturedPiece;
   }
 
-  private void nextTurn(){
-    turn ++;
+  private void undoMove(Position source, Position target, Piece capturedPiece) {
+    Piece p = board.removePiece(target);
+    board.placePiece(p, source);
+
+    if (capturedPiece != null) {
+      board.placePiece(capturedPiece, target);
+
+      capturedPieces.remove(capturedPiece);
+      piecesOnTheBoard.add(capturedPiece);
+    }
+  }
+
+  private void nextTurn() {
+    turn++;
     currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
+  }
+
+  private Color opponet(Color color) {
+    return (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
+  }
+
+  private ChessPiece king(Color color) {
+    List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece) x).getColor() == color)
+        .collect(Collectors.toList());
+
+    for (Piece p : list) {
+      if (p instanceof King) {
+        return (ChessPiece) p;
+      }
+    }
+
+    String s = (color == Color.WHITE) ? "BRANCO" : "PRETO";
+
+    throw new IllegalStateException("Não há rei da cor" + s);
+  }
+
+  public boolean getCheck(){
+    return check;
   }
 }
