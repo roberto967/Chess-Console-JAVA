@@ -1,5 +1,6 @@
 package application;
 
+import java.net.Socket;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -39,7 +40,7 @@ public class UI {
 
   public static ChessPosition readChessPosition(Scanner sc) {
     try {
-      String s = sc.nextLine();
+      String s = sc.nextLine().toUpperCase();
       char column = s.charAt(0);
       int row = Integer.parseInt(s.substring(1));
 
@@ -51,21 +52,30 @@ public class UI {
   }
 
   public static void printMatch(ChessMatch chessMatch, List<ChessPiece> captured) {
+    Color currentPlayer = chessMatch.getCurrentPlayer();
+    String sCurrentPlayer;
+
+    sCurrentPlayer = (currentPlayer == Color.WHITE) ? "BRANCAS" : "PRETAS";
+
     printBoard(chessMatch.getPieces());
     System.out.println();
-    
+
     printCapturedPieces(captured);
 
     System.out.println("Turn : " + chessMatch.getTurn());
-    if (chessMatch.getCurrentPlayer() == Color.WHITE) {
-      System.out.println("BRANCAS jogam.");
-    } else {
-      System.out.println("PRETAS jogam.");
-    }
 
-    if(chessMatch.getCheck()){
+    if (!chessMatch.getCheckMate()) {
+      System.out.println(sCurrentPlayer + " jogam.");
+
+      if (chessMatch.getCheck()) {
+        System.out.print(ANSI_YELLOW);
+        System.out.println("CHECK !!!!");
+        System.out.print(ANSI_RESET);
+      }
+    } else {
       System.out.print(ANSI_YELLOW);
-      System.out.println("CHECK !!!!");
+      System.out.println("CHECKMATE !!!!");
+      System.out.println("VENCEDOR: " + sCurrentPlayer);
       System.out.print(ANSI_RESET);
     }
   }
@@ -74,7 +84,7 @@ public class UI {
     for (int i = 0; i < pieces.length; i++) {
       System.out.print((8 - i) + " ");
 
-      for (int j = 0; j < pieces.length; j++) {// considera-se que a matriz é quadrada(8x8)
+      for (int j = 0; j < pieces.length; j++) { // considera-se que a matriz é quadrada(8x8)
         PrintPiece(pieces[i][j], false);
       }
       System.out.println();

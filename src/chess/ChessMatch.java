@@ -16,6 +16,7 @@ public class ChessMatch {
   private Color currentPlayer;
   private int turn;
   private boolean check;
+  private boolean checkMate;
 
   private List<Piece> piecesOnTheBoard = new ArrayList<>();
   private List<Piece> capturedPieces = new ArrayList<>();
@@ -34,6 +35,14 @@ public class ChessMatch {
 
   public Color getCurrentPlayer() {
     return currentPlayer;
+  }
+
+  public boolean getCheckMate() {
+    return checkMate;
+  }
+
+  public boolean getCheck() {
+    return check;
   }
 
   public ChessPiece[][] getPieces() {
@@ -58,9 +67,9 @@ public class ChessMatch {
     placeNewPiece('H', 8, new Rook(board, Color.BLACK));
     placeNewPiece('D', 8, new King(board, Color.BLACK));
 
-    placeNewPiece('A', 1, new Rook(board, Color.WHITE));
+    // placeNewPiece('A', 1, new Rook(board, Color.WHITE));
     placeNewPiece('H', 1, new Rook(board, Color.WHITE));
-    placeNewPiece('D', 1, new King(board, Color.WHITE));
+    placeNewPiece('A', 1, new King(board, Color.WHITE));
   }
 
   public boolean[][] possibleMoves(ChessPosition sourcePosition) {
@@ -79,7 +88,7 @@ public class ChessMatch {
 
     Piece capturedPiece = makeMove(source, target);
 
-    if(testCheck(currentPlayer)){
+    if (testCheck(currentPlayer)) {
       undoMove(source, target, capturedPiece);
 
       throw new ChessExeption("Você não pode se por em CHECK.");
@@ -87,7 +96,11 @@ public class ChessMatch {
 
     check = (testCheck(opponet(currentPlayer))) ? true : false;
 
-    nextTurn();
+    if (testCheckMate(opponet(currentPlayer))) {
+      checkMate = true;
+    } else {
+      nextTurn();
+    }
 
     return (ChessPiece) capturedPiece;
   }
@@ -117,15 +130,47 @@ public class ChessMatch {
     List<Piece> opponentPieces = piecesOnTheBoard.stream().filter(x -> ((ChessPiece) x).getColor() == opponet(color))
         .collect(Collectors.toList());
 
-    for(Piece p : opponentPieces){
+    for (Piece p : opponentPieces) {
       boolean[][] mat = p.possibleMoves();
 
-      if(mat[kingpPosition.getRow()][kingpPosition.getColumn()]){
+      if (mat[kingpPosition.getRow()][kingpPosition.getColumn()]) {
         return true;
       }
     }
 
     return false;
+  }
+
+  private boolean testCheckMate(Color color) {
+    if (!testCheck(color)) {
+      return false;
+    }
+
+    List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece) x).getColor() == color)
+        .collect(Collectors.toList());
+
+    for (Piece p : list) {
+      boolean[][] mat = p.possibleMoves();
+
+      for (int i = 0; i < board.getRows(); i++) {
+        for (int j = 0; j < board.getColumns(); j++) {
+          if (mat[i][j]) {
+            Position source = ((ChessPiece) p).getChessPosition().toPosition();
+
+            Position target = new Position(i, j);
+
+            Piece capturedPiece = makeMove(source, target);
+
+            boolean testCheck = testCheck(color);
+            undoMove(source, target, capturedPiece);
+            if (!testCheck) {
+              return false;
+            }
+          }
+        }
+      }
+    }
+    return true;
   }
 
   private Piece makeMove(Position source, Position target) {
@@ -177,9 +222,5 @@ public class ChessMatch {
     String s = (color == Color.WHITE) ? "BRANCO" : "PRETO";
 
     throw new IllegalStateException("Não há rei da cor" + s);
-  }
-
-  public boolean getCheck(){
-    return check;
   }
 }
