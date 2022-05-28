@@ -49,5 +49,6 @@ public class App {
 
         UI.clearScreen();
         UI.printMatch(chessMatch, captured);
+        sc.close();
     }
 }
