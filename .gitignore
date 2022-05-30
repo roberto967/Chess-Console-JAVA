@@ -1,5 +1,8 @@
 /bin/
 .vscode/
+.idea/
+/out/
+Chess-Console-JAVA.iml
 # Compiled class file
 *.class
 
