@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import boardLayer.Board;
 import boardLayer.Piece;
 import boardLayer.Position;
+import chess.pieces.Bishop;
 import chess.pieces.King;
 import chess.pieces.Pawn;
 import chess.pieces.Rook;
@@ -90,6 +91,7 @@ public class ChessMatch {
     placeNewPiece('F', 2, new Pawn(board, Color.WHITE));
     placeNewPiece('G', 2, new Pawn(board, Color.WHITE));
     placeNewPiece('H', 2, new Pawn(board, Color.WHITE));
+    placeNewPiece('H', 3, new Bishop(board, Color.WHITE));
   }
 
   public boolean[][] possibleMoves(ChessPosition sourcePosition) {
