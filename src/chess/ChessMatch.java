@@ -12,6 +12,7 @@ import chess.pieces.Bishop;
 import chess.pieces.King;
 import chess.pieces.Kinight;
 import chess.pieces.Pawn;
+import chess.pieces.Queen;
 import chess.pieces.Rook;
 
 public class ChessMatch {
@@ -66,10 +67,10 @@ public class ChessMatch {
   }
 
   private void inicialSetup() {
-
+    placeNewPiece('D', 8, new King(board, Color.BLACK));
+    placeNewPiece('E', 8, new Queen(board, Color.BLACK));
     placeNewPiece('A', 8, new Rook(board, Color.BLACK));
     placeNewPiece('H', 8, new Rook(board, Color.BLACK));
-    placeNewPiece('D', 8, new King(board, Color.BLACK));
     placeNewPiece('C', 8, new Bishop(board, Color.BLACK));
     placeNewPiece('F', 8, new Bishop(board, Color.BLACK));
     placeNewPiece('B', 8, new Kinight(board, Color.BLACK));
@@ -82,12 +83,11 @@ public class ChessMatch {
     placeNewPiece('F', 7, new Pawn(board, Color.BLACK));
     placeNewPiece('G', 7, new Pawn(board, Color.BLACK));
     placeNewPiece('H', 7, new Pawn(board, Color.BLACK));
-    
 
-
+    placeNewPiece('D', 1, new King(board, Color.WHITE));
+    placeNewPiece('E', 3, new Queen(board, Color.WHITE));
     placeNewPiece('A', 1, new Rook(board, Color.WHITE));
     placeNewPiece('H', 1, new Rook(board, Color.WHITE));
-    placeNewPiece('D', 1, new King(board, Color.WHITE));
     placeNewPiece('C', 1, new Bishop(board, Color.WHITE));
     placeNewPiece('F', 1, new Bishop(board, Color.WHITE));
     placeNewPiece('B', 1, new Kinight(board, Color.WHITE));
@@ -204,7 +204,7 @@ public class ChessMatch {
   }
 
   private Piece makeMove(Position source, Position target) {
-    ChessPiece p = (ChessPiece)board.removePiece(source);
+    ChessPiece p = (ChessPiece) board.removePiece(source);
     p.increaseMoveCount();
 
     Piece capturedPiece = board.removePiece(target);
@@ -220,7 +220,7 @@ public class ChessMatch {
   }
 
   private void undoMove(Position source, Position target, Piece capturedPiece) {
-    ChessPiece p = (ChessPiece)board.removePiece(target);
+    ChessPiece p = (ChessPiece) board.removePiece(target);
     board.placePiece(p, source);
     p.decreaseMoveCount();
 
